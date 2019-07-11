@@ -97,6 +97,8 @@ Conforme mencionado anteriormente, iremos abordar o problema do \textit{code ret
 a arquitetura proposta por Tan et al., que utiliza a função de classificação \textit{pairwise} e uma arquitetura siamesa \cite{lai-etal-2018-review}. De acordo com 
 \cite{lai-etal-2018-review}, o problema de \textit{answer selection} pode ser analisado sob duas formas: forma de aprendizado e arquitetura.
 
+\subsection{Forma de aprendizado}
+
 O problema de \textit{answer selection} consiste em encontrar a resposta mais relevante dado uma questão. Ele pode ser abordado como uma problema de classificação, onde
 o objetivo é classificar com uma pontuação melhor as respostas mais relevantes de acordo com a questão.
 
@@ -108,9 +110,37 @@ são triplas (q\_i, c\_i+, c\_i-), onde q\_i é uma questão, c\_i+ é uma respo
  
 Descrição breve do problema e do método utilizado. Arquitetura siamês, utilizando representação distribuída de código-fonte e questão com uma camada bi-LSTM conectada a um filtro CNN. E por fim, utiliza uma camada de agregação max pooling e utilizando a funcao hinge loss de ranking.
 
+\subsection{Arquitetura}
+
+\subsubsection{Representação}
+Os dados foram representados como sequência de tokens. Utilizamos uma representação distribuída word2vec. Diferente do \textit{answer selection} proposto por Tan et al. no qual ele cria apenas uma representação distribuída para a amostra inteira, nós geramos a representação distribuída para as questões e outra para os trechos do código-fonte.
+
+A amostra e a visualização dos dados são apresentados nos resultados preliminares.
+
+
+
+
+
+
 \section{Resultados preliminares}\label{sec:resultados-preliminares}
 
+\subsection{Dados}
 
+Para visualizar a representação distribuída, utilizamos o método t-SNE. A representação pode ser visualizada nas imagens abaixo:
+
+\begin{figure}[h]
+\includegraphics[width=14cm]{figures/tsne-question.png}
+\caption{t-SNE para 200 palavras mais comuns das questões}
+\label{fig:tsne-questao}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[width=14cm]{figures/tsne-code.png}
+\caption{t-SNE para 200 palavras mais comuns dos trechos de código-fonte}
+\label{fig:tsne-codigo}
+\end{figure}
+
+Adicionar os gráficos sobre a quantidade de palavras
 
 
 \section{Conclusões}
