@@ -21,6 +21,7 @@
 %\usepackage[brazil]{babel}   
 \usepackage[utf8]{inputenc}  
 \renewcommand{\refname}{Referências}
+
      
 \sloppy
 
@@ -104,25 +105,39 @@ o objetivo é classificar com uma pontuação melhor as respostas mais relevante
 
 Tan et al. utilizou o método \textit{pairwise}, no qual ele classifica as respostas corretas com uma pontuação maior que a pontuação das incorretas. Dado uma questão,
 o método utiliza pares de candidatos de repostas e aprende a classificar qual resposta é mais relevante para a questão. Por exemplo, os dados de entrada de treinamento
-são triplas (q\_i, c\_i+, c\_i-), onde q\_i é uma questão, c\_i+ é uma resposta correta, c\_i- é uma resposta incorreta obtida a partir da amostra completa dos dados. 
+são triplas $(q_{i}, c_{i}^{+}, c_{i}^{-})$, onde $q_{i}$ é uma questão, $c_{i}^{+}$ é uma resposta correta, $c_{i}^{-}$ é uma resposta incorreta obtida a partir da amostra completa dos dados. 
+
+E a função hinge loss é definida como:
+
+\begin{equation}
+L = max(0, m - h_{\theta}(q_{i}, c_{i}^{+}) + h_{\theta}(q_{i}, c_{i}^{-}))   
+\end{equation}
 
 
- 
-Descrição breve do problema e do método utilizado. Arquitetura siamês, utilizando representação distribuída de código-fonte e questão com uma camada bi-LSTM conectada a um filtro CNN. E por fim, utiliza uma camada de agregação max pooling e utilizando a funcao hinge loss de ranking.
+Onde $m$ é a margem. Se $h_{\theta}(q_{i}, c_{i}^{+}) - h_{\theta}(q_{i}, c_{i}^{-}) < m$ então $L$ é positivo. Quando esta condição é satisfeita, a implicação é que o sistema classifica a resposta correta abaixo da resposta incorreta, ou a questão correta pontua um pouco acima da resposta incorreta. Por outro lado, se a resposta correta tem uma pontuação maior que a incorreta por uma margem acima ou igual a $m$ (i.e., $h_{\theta}(q_{i}, c_{i}^{+}) - h_{\theta}(q_{i}, c_{i}^{-}) \geq m$, a função hinge loss é igual a zero. Em resumo, a função loss incentiva a reposta correta a ter uma pontuação maior que a incorreta por uma certa margem \cite{lai-etal-2018-review}.
+
+\cite{tan-lstm-qa} propõe o uso da função de similaridade \textit{cosine}, na função $h_{\theta}$, pois esta ignora a magnitude e foca somente na orientação.
+Isto ajuda a identificar um documento muito longo com o mesmo tema que um documento curto no problema de recuperação de informação em NLP, por exemplo. Pois a função não se preocupa
+com a magnitude ou o tamanho do documento em si. 
+
+Esta função de similaridade é comumente utilizada em problemas de \textit{answer selection} \cite{feng-answer-selection-2015}. Normalmente as questões são mais curtas que as respostas. No nosso caso, as questões tem em média 8 tokens, enquanto os trechos de código-fonte tem 48 tokens.
 
 \subsection{Arquitetura}
 
-\subsubsection{Representação}
-Os dados foram representados como sequência de tokens. Utilizamos uma representação distribuída word2vec. Diferente do \textit{answer selection} proposto por Tan et al. no qual ele cria apenas uma representação distribuída para a amostra inteira, nós geramos a representação distribuída para as questões e outra para os trechos do código-fonte.
+\cite{tan-lstm-qa} propôs uma arquitetura QA-LSTM que utiliza uma rede neural recorrente bidirecional, mais especificamente uma rede LSTM (biLSTM) \cite{hochreiter-Schmidhuber-lstm-1997} e uma pooling layer para construir a representação dos vetores de entrada indepdentemente. Ao final, o modelo utiliza a função de similaridade \textit{cosine} para calcular a distância
+entre as representações. 
 
-A amostra e a visualização dos dados são apresentados nos resultados preliminares.
+A arquitetura de referência que iremos utilizar acrescenta uma estrutura de rede convolucional na saída da rede bi-LSTM. Os vetores de saída da rede bi-LSTM tornam-se vetores de entrada na na estrutura CNN. O CNN auxilia na síntese da representação dos vetores.
+
+\section{Experimento}
+
+Para avaliar a arquitetura proposta por \cite{tan-lstm-qa} composta por uma rede bi-LSTM com CNN no problema do \textit{code retrieval}, utilizamos os dados disponibilizados por \cite{Yao-staqc:2018}. Em seu trabalho \cite{Yao-staqc:2018} coletou mais de \textbf{147 mil} pares de perguntas e trechos de código-fonte em Python e aproximadamente \textbf{119 mil} pares de perguntas e trechos de código-fonte em SQL. 
+\subsection{Configuração}
+
+Os dados foram representados como sequência de tokens. Utilizamos uma representação distribuída word2vec \cite{mikolov-word2vec-2013}. Diferente do \textit{answer selection} proposto por \cite{tan-lstm-qa} no qual ele cria apenas uma representação distribuída para a amostra inteira, nós geramos a representação distribuída para as questões e outra para os trechos do código-fonte.
 
 
-
-
-
-
-\section{Resultados preliminares}\label{sec:resultados-preliminares}
+\subsection{Resultados preliminares}\label{sec:resultados-preliminares}
 
 \subsection{Dados}
 
@@ -144,8 +159,6 @@ Adicionar os gráficos sobre a quantidade de palavras
 
 
 \section{Conclusões}
-
-
 
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
