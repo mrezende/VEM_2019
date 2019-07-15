@@ -159,17 +159,26 @@ No nosso caso, utilizaremos estes dados anotados automaticamente para treinar o 
 
 Para minimizar o viés, iremos adotar o procedimento proposto por \cite{iyer-etal-2016-summarizing} na avaliação do modelo. O modelo obtido durante o treinamento será avaliado a cada época na amostra \emph{DEV}. Para cada par $(q_{i}, c_{i}^{+})$ na amostra \emph{DEV}, selecionaremos outros 49 distratores $c^{'}$ da amostra de treinamento, onde $c^{'} \neq c_{i}^{+}$. Estes 50 pares $(c_{i}, q_{i})$ serão classificados de acordo com a função $h_{\theta}$ de similaridade. Posteriormente, o MRR de cada questão $q_{i}$ da amostra \emph{DEV} será calculada. Ao final calculamos a média da MRR. O modelo de treinamento que obtiver a maior média MRR na amostra \emph{DEV} será escolhida. 
 
-A avaliação final é feita utilizando o modelo obtido no treinamento. O procedimento é o mesmo, porém o modelo é avaliado na amostra \emph{EVAL}. 
-
+A avaliação final é feita utilizando o modelo obtido no treinamento. O procedimento é o mesmo, a cada par $(q_{i}, c_{i}^{+})$, outros 49 distratores são selecionados aleatoriamente. O procedimento é repetido 20 vezes e ao final calculamos a média MRR.
 
 \subsection{Configuração}
 
 Os dados foram representados como sequência de tokens. Utilizamos uma representação distribuída word2vec \cite{mikolov-word2vec-2013}. Diferente do \textit{answer selection} proposto por \cite{tan-lstm-qa} no qual ele cria apenas uma representação distribuída para a amostra inteira, nós geramos a representação distribuída para as questões e outra para os trechos do código-fonte.
 
+Quanto ao código-fonte, foi feito um pré-processamento. Utilizamos a função disponibilizada por \cite{Yao-staqc:2018} que substitui literais numéricos e texto (\textit{string}) por NUMBER e STRING. Os comentários são removidos e o nome das variáveis são substituídas por VAR.
+
+Os parâmetros de execução foram os mesmos utilizados por \cite{tan-lstm-qa}. Com exceção dos filtros na camada CNN, que reduzimos para o valor 100. O valor utilizado por \cite{tan-lstm-qa} de 1000, aumentou a capacidade do modelo, causando o \textit{overfitting}.
+
+
+
 
 \subsection{Resultados preliminares}\label{sec:resultados-preliminares}
 
-Os resultados do experimento podem ser visualizados na tabela~\ref{table:resultados-preliminares}. Os resultados correspondem a média do MRR após 20 rodadas de execução utilizando o melhor modelo obtido a partir do treinamento. E o modelo foi avaliado utilizado os dados EVAL. De acordo com a tabela~\ref{table:resultados-preliminares}, \textbf{bi-LSTM-CNN} obteve o melhor desempenho. Porém, CNN obteve um resultado muito próximo e o tempo de treinamento é muito menor. O tempo total de treinamento da rede bi-LSTM com CNN levou em torno de 48 minutos, utilizando uma GPU Tesla K80. Enquanto a arquitetura CNN levou em torno de 6s. 
+Os resultados do experimento podem ser visualizados na tabela~\ref{table:resultados-preliminares}. Os resultados correspondem a média do MRR após 20 rodadas de execução utilizando o melhor modelo obtido a partir do treinamento. E o modelo foi avaliado utilizado os dados EVAL. 
+
+Nestes resultados preliminares, comparamos o modelo bi-LSTM com CNN com outros dois modelos. O modelo \emph{Embedding}, mais simples, é composto apenas por uma camada com a representação distribuída das questões e trechos de código-fonte. A saída é uma camada de maxpool e ao final a similaridade é calculada através da função \textit{cosine}. 
+
+De acordo com a tabela~\ref{table:resultados-preliminares}, \textbf{bi-LSTM-CNN} obteve o melhor desempenho. Porém, CNN obteve um resultado muito próximo e o tempo de treinamento é muito menor. O tempo total de treinamento da rede bi-LSTM com CNN levou em torno de 48 minutos, utilizando uma GPU Tesla K80. Enquanto a arquitetura CNN levou em torno de 6s. 
 
 Em todos os modelos, utilizamos uma camada de maxpool e a função de similaridade \textit{cosine}. Utilizamos o valor de margem $0,009$ para a função \textit{hinge loss}, valor proposto por \cite{feng-answer-selection-2015}.
 
