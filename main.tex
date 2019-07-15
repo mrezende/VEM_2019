@@ -25,7 +25,7 @@
      
 \sloppy
 
-\title{Estudo preliminar: Uso da arquitetura deep learning de \textit{answer selection} no problema do \textit{code retrieval}}
+\title{Estudo preliminar: Uso da arquitetura deep learning de seleção de respostas no problema de recuperação de código-fonte}
 
 \author{Marcelo de Rezende Martins\inst{1}, Marco Aurélio Gerosa\inst{2}}
 
@@ -52,16 +52,14 @@
 \end{abstract}
      
 \begin{resumo} 
-  O problema do \textit{code retrieval} consiste em dado uma questão e um conjunto de trechos de código-fonte, recuperar o código fonte que resolva a questão . Este artigo busca apresentar uma nova abordagem para este problema, fazendo uma aproximação com o problema de \textit{answer selection} em \emph{NLP}. Sob esta perspectiva, pretendemos avaliar, inicialmente, o desempenho da arquitetura bi-LSTM com CNN no problema do \textit{code retrieval}. 
+  O problema de recuperação de código-fonte consiste em dado uma questão e um conjunto de trechos de código-fonte, recuperar o trecho de código-fonte que resolva a questão . Este artigo busca apresentar uma nova abordagem para este problema, fazendo uma aproximação com o problema de seleção de respostas da área de processamento de linguagens naturais (\emph{NLP}). Sob esta perspectiva, pretendemos avaliar, inicialmente, o desempenho da arquitetura de rede neural recorrente bidirecional (bi-LSTM) com uma estrutura de rede neural convolucional (CNN) no problema de recuperação de código-fonte. 
 \end{resumo}
 
 
 \section{Introdução}
 
-Segundo \cite{Allamanis-bimodal-source-code-natural-language:2015}, \textit{code retrieval} é um problema de recuperar informação, 
-dado uma questão ou descrição em linguagem natural e um conjunto de possíveis trechos de código-fonte, o objetivo é recuperar o 
-trecho de código-fonte que solucione a questão ou seja mais relevante de acordo com a descrição. Já segundo \cite{lai-etal-2018-review},
-dado uma questão e um conjunto de possíveis respostas, \textit{answer selection} busca identificar qual resposta consegue responder a 
+Segundo \cite{Allamanis-bimodal-source-code-natural-language:2015}, recuperação de código-fonte ou \textit{code retrieval} é um problema de recuperar informação, onde dado uma questão ou uma descrição em linguagem natural e um conjunto de possíveis trechos de código-fonte, o objetivo é recuperar o trecho de código-fonte que solucione a questão ou seja mais relevante de acordo com a descrição. Já segundo \cite{lai-etal-2018-review},
+dado uma questão e um conjunto de possíveis respostas, seleção de respostas ou \textit{answer selection} busca identificar qual resposta consegue responder a 
 pergunta corretamente. Pela definição, é possível verificar as similaridades dos problemas. \cite{iyer-etal-2016-summarizing} em seu trabalho, utilizou LSTM com o mecanismo de atenção para solucionar
 o problema de \textit{code retrieval}. Tanto LSTM quanto o mecanismo de atenção é comumente utilizado nos problemas de tradução e geração de texto. Para \cite{Knuth:1984:LP}, 
 o código-fonte é uma forma de comunicação:
@@ -81,11 +79,11 @@ Considerando o código-fonte uma forma de comunicação, assim elencado por \cit
 do \textit{code retrieval}, é analisá-la sob a perspectiva do \textit{answer selection}. Porém, é necessário levar em consideração as peculiaridades do código-fonte ao abordar o problema sob esta perspectiva. 
 
 Este presente artigo busca apresentar os resultados preliminares de um estudo sobre o uso de arquitetura deep learning de answer selection no problema do code retrieval.
-Inicialmente, utilizaremos a arquitetura bi-LSTM com CNN proposta por Tan et al.. Além de propor uma nova arquitetura para este problema, iremos avaliar o modelo 
-utilizando os dados de entrada da base StaQC, criada por Yao. Yao coletou milhares de pares de perguntas e trechos de código-fonte do StackOverFlow e a 
-disponibilizou publicamente. Yao avaliou a base utilizando a arquitetura proposta por Srinivasan Iyer, que combina uma rede neural LSTM com o mecanismo 
-de atenção (attention). Esta arquitetura utilizada por Iyer é comumente utilizada na geração de textos, que foi a proposta do trabalho de Iyer. Além de criar um modelo
-para recuperar o trecho de código-fonte a partir de uma descrição em linguagem natural, o modelo proposto por Iyer foi utilizada para fazer o inverso, gerar uma descrição
+Inicialmente, utilizaremos a arquitetura bi-LSTM com CNN proposta por \cite{tan-lstm-qa}. Além de propor uma nova arquitetura para este problema, iremos avaliar o modelo 
+utilizando os dados de entrada da base StaQC, criada por \cite{Yao-staqc:2018}. \cite{Yao-staqc:2018} coletou milhares de pares de perguntas e trechos de código-fonte do StackOverFlow e a 
+disponibilizou publicamente. \cite{Yao-staqc:2018} avaliou a base utilizando a arquitetura proposta por \cite{iyer-etal-2016-summarizing}, que combina uma rede neural LSTM com o mecanismo 
+de atenção (attention). Esta arquitetura utilizada por \cite{iyer-etal-2016-summarizing} é comumente utilizada na geração de textos, que foi a proposta do trabalho de \cite{iyer-etal-2016-summarizing}. Além de criar um modelo
+para recuperar o trecho de código-fonte a partir de uma descrição em linguagem natural, o modelo proposto por \cite{iyer-etal-2016-summarizing} foi utilizada para fazer o inverso, gerar uma descrição
 a partir de um trecho de código-fonte. A nossa proposta inicial é apenas recuperar o trecho de código-fonte a partir de uma descrição.
 
 Na seção método é apresentado a arquitetura utilizada e as adaptações necessárias feitas. Na seção resultados iniciais discute-se os resultados e os ajustes nos 
@@ -129,9 +127,41 @@ entre as representações.
 
 A arquitetura de referência que iremos utilizar acrescenta uma estrutura de rede convolucional na saída da rede bi-LSTM. Os vetores de saída da rede bi-LSTM tornam-se vetores de entrada na na estrutura CNN. O CNN auxilia na síntese da representação dos vetores.
 
-\section{Experimento}
+\section{Experimento}\label{sec:experimento}
 
 Para avaliar a arquitetura proposta por \cite{tan-lstm-qa} composta por uma rede bi-LSTM com CNN no problema do \textit{code retrieval}, utilizamos os dados disponibilizados por \cite{Yao-staqc:2018}. Em seu trabalho \cite{Yao-staqc:2018} coletou mais de \textbf{147 mil} pares de perguntas e trechos de código-fonte em Python e aproximadamente \textbf{119 mil} pares de perguntas e trechos de código-fonte em SQL. 
+
+Inicialmente, utilizaremos uma amostra de 62252 pares $(q_{i}, c_{i}^{+})$ em Python. Onde $q_{i}$ é o título de uma questão no site StackOverFlow\footnote{Site: https://www.stackoverflow.com/} e $c_{i}^{+}$ corresponde a um trecho de código-fonte apontado como solução para a questão $q_{i}$. Destes 62252 pares, excluímos 2169 pares que foram anotados manualmente por 4 estudantes de graduação. Segundo \cite{Yao-staqc:2018}, os trechos de código-fonte que são provável solução foram anotados com a anotação \emph{"1"}, caso contrário \emph{"0"}. Todos os pares $(q_{i}, c_{i})$ foram revisados por pelo menos dois alunos e somente é considerado solução para a questão, o trecho de código-fonte anotado com a anotação \emph{"1"} por todos os estudantes.
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ |p{3cm}|p{3cm}|  }
+ \hline
+ \textbf{Amostras} & \textbf{Quantidade de $(q_{i}, c_{i}^{+})$}\\
+ \hline
+ Treinamento & $60083$\\
+ \hline
+ DEV & $1085$ \\
+ \hline
+ EVAL & $1084$\\
+ \hline
+ \textbf{Total} & $62252$\\
+ \hline
+\end{tabular}
+\caption{Divisão das amostras conforme os critérios adotados por \cite{iyer-etal-2016-summarizing}}
+\label{table:divisao-amostras}
+\end{table}
+
+Conforme a tabela~\ref{table:divisao-amostras}, utilizamos 60083 pares $(q_{i}, c_{i}^{+})$ para treinamento. Estes pares foram anotados automaticamente por um framework proposto por \cite{Yao-staqc:2018}. Este framework é composto por uma rede neural recorrente que foi treinada e avaliada nos dados anotados manualmente pelos estudantes. Ao final, o modelo obtido a partir do treinamento, classificou automaticamente 60083 pares de $(q_{i}, c_{i}^{+})$ em Python, por exemplo.
+
+No nosso caso, utilizaremos estes dados anotados automaticamente para treinar o nosso modelo. E para avaliar inicialmente o modelo do \cite{tan-lstm-qa}, utilizaremos os 2169 pares $(q_{i}, c_{i}^{+})$ anotados manualmente.
+
+Para minimizar o viés, iremos adotar o procedimento proposto por \cite{iyer-etal-2016-summarizing} na avaliação do modelo. O modelo obtido durante o treinamento será avaliado a cada época na amostra \emph{DEV}. Para cada par $(q_{i}, c_{i}^{+})$ na amostra \emph{DEV}, selecionaremos outros 49 distratores $c^{'}$ da amostra de treinamento, onde $c^{'} \neq c_{i}^{+}$. Estes 50 pares $(c_{i}, q_{i})$ serão classificados de acordo com a função $h_{\theta}$ de similaridade. Posteriormente, o MRR de cada questão $q_{i}$ da amostra \emph{DEV} será calculada. Ao final calculamos a média da MRR. O modelo de treinamento que obtiver a maior média MRR na amostra \emph{DEV} será escolhida. 
+
+A avaliação final é feita utilizando o modelo obtido no treinamento. O procedimento é o mesmo, porém o modelo é avaliado na amostra \emph{EVAL}. 
+
+
 \subsection{Configuração}
 
 Os dados foram representados como sequência de tokens. Utilizamos uma representação distribuída word2vec \cite{mikolov-word2vec-2013}. Diferente do \textit{answer selection} proposto por \cite{tan-lstm-qa} no qual ele cria apenas uma representação distribuída para a amostra inteira, nós geramos a representação distribuída para as questões e outra para os trechos do código-fonte.
@@ -139,26 +169,41 @@ Os dados foram representados como sequência de tokens. Utilizamos uma represent
 
 \subsection{Resultados preliminares}\label{sec:resultados-preliminares}
 
-\subsection{Dados}
+Os resultados do experimento podem ser visualizados na tabela~\ref{table:resultados-preliminares}. Os resultados correspondem a média do MRR após 20 rodadas de execução utilizando o melhor modelo obtido a partir do treinamento. E o modelo foi avaliado utilizado os dados EVAL. De acordo com a tabela~\ref{table:resultados-preliminares}, \textbf{bi-LSTM-CNN} obteve o melhor desempenho. Porém, CNN obteve um resultado muito próximo e o tempo de treinamento é muito menor. O tempo total de treinamento da rede bi-LSTM com CNN levou em torno de 48 minutos, utilizando uma GPU Tesla K80. Enquanto a arquitetura CNN levou em torno de 6s. 
 
-Para visualizar a representação distribuída, utilizamos o método t-SNE. A representação pode ser visualizada nas imagens abaixo:
+Em todos os modelos, utilizamos uma camada de maxpool e a função de similaridade \textit{cosine}. Utilizamos o valor de margem $0,009$ para a função \textit{hinge loss}, valor proposto por \cite{feng-answer-selection-2015}.
 
-\begin{figure}[h]
-\includegraphics[width=14cm]{figures/tsne-question.png}
-\caption{t-SNE para 200 palavras mais comuns das questões}
-\label{fig:tsne-questao}
-\end{figure}
 
-\begin{figure}[h]
-\includegraphics[width=14cm]{figures/tsne-code.png}
-\caption{t-SNE para 200 palavras mais comuns dos trechos de código-fonte}
-\label{fig:tsne-codigo}
-\end{figure}
+\begin{table}[h]
+\centering
+\begin{tabular}{ |p{3cm}|p{3cm}|  }
+ \hline
+ \textbf{Modelos} & \textbf{MRR}\\
+ \hline
+ Embedding & $0,52 \pm 0,01$\\
+ \hline
+ CNN & $0,58 \pm 0,01 $ \\
+ \hline
+ \textbf{bi-LSTM-CNN} & $\textbf{0,60} \pm \textbf{0,02}$\\
+ \hline
+\end{tabular}
+\caption{Resultados preliminares dos modelos QA de \cite{tan-lstm-qa} no problema de \textit{code retrieval}}
+\label{table:resultados-preliminares}
+\end{table}
 
-Adicionar os gráficos sobre a quantidade de palavras
+\subsection{Ameaças à validade}
 
+Conforme exposto na seção~\ref{sec:experimento}, os dados utilizados no treinamento para obter o modelo final foram coletados automaticamente por \cite{Yao-staqc:2018}. \cite{Yao-staqc:2018} criou um modelo composto por uma rede neural recorrente para obter os pares de questões e trechos de código-fonte automaticamente. E para treinar este modelo, foi utilizado os dados anotados manualmente. Estes dados anotados manualmente são os mesmos utilizados na avaliação do nosso modelo. 
+
+Para minimizar o viés, utilizamos o mesmo procedimento de avaliação proposto por \cite{iyer-etal-2016-summarizing}. Para cada par de $(q_{i}, c_{i}^{+})$, selecionamos aleatoriamente 49 distratores $c^{'}$ da amostra de treinamento, onde $c^{'} \neq c_{i}$. 
 
 \section{Conclusões}
+
+Neste trabalho, propusemos uma abordagem diferente para o problema do \textit{code retrieval}. Nosso intuito foi abordar o problema do \textit{code retrieval} sob a perspectiva do problema \textit{answer selection}, já conhecido em NLP. E dado o bom desempenho dos modelos deep learning no contexto do \textit{answer selection}, utilizamos o modelo proposto por \cite{tan-lstm-qa}.
+
+Conforme a seção~\ref{sec:resultados-preliminares}, o modelo proposto por \cite{tan-lstm-qa} apresentou um bom desempenho no problema do \textit{code retrieval}. 
+
+
 
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
