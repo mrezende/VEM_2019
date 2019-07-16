@@ -153,7 +153,7 @@ Inicialmente, utilizaremos uma amostra de 62252 pares $(q_{i}, c_{i}^{+})$ em Py
 \label{table:divisao-amostras}
 \end{table}
 
-Conforme a tabela~\ref{table:divisao-amostras}, utilizamos 60083 pares $(q_{i}, c_{i}^{+})$ para treinamento. Estes pares foram anotados automaticamente por um framework proposto por \cite{Yao-staqc:2018}. Este framework é composto por uma rede neural recorrente que foi treinada e avaliada nos dados anotados manualmente pelos estudantes. Ao final, o modelo obtido a partir do treinamento, classificou automaticamente 60083 pares de $(q_{i}, c_{i}^{+})$ em Python, por exemplo.
+Conforme a tabela~\ref{table:divisao-amostras}, utilizamos 60083 pares $(q_{i}, c_{i}^{+})$ para treinamento. Estes pares foram anotados automaticamente por um framework proposto por \cite{Yao-staqc:2018}. Este framework é composto por uma rede neural recorrente que foi treinada e avaliada nos dados anotados manualmente pelos estudantes. Ao final, o modelo obtido a partir do treinamento, classificou automaticamente 60083 pares de $(q_{i}, c_{i}^{+})$ em Python.
 
 No nosso caso, utilizaremos estes dados anotados automaticamente para treinar o nosso modelo. E para avaliar inicialmente o modelo do \cite{tan-lstm-qa}, utilizaremos os 2169 pares $(q_{i}, c_{i}^{+})$ anotados manualmente.
 
@@ -174,9 +174,13 @@ Os parâmetros de execução foram os mesmos utilizados por \cite{tan-lstm-qa}. 
 
 \subsection{Resultados preliminares}\label{sec:resultados-preliminares}
 
-Os resultados do experimento podem ser visualizados na tabela~\ref{table:resultados-preliminares}. Os resultados correspondem a média do MRR após 20 rodadas de execução utilizando o melhor modelo obtido a partir do treinamento. E o modelo foi avaliado utilizado os dados EVAL. 
+Os resultados do experimento podem ser visualizados na tabela~\ref{table:resultados-preliminares}. Os resultados correspondem a média do MRR após 20 rodadas de execução utilizando o melhor modelo obtido a partir do treinamento. E o modelo foi avaliado utilizando os dados EVAL. 
 
 Nestes resultados preliminares, comparamos o modelo bi-LSTM com CNN com outros dois modelos. O modelo \emph{Embedding}, mais simples, é composto apenas por uma camada com a representação distribuída das questões e trechos de código-fonte. A saída é uma camada de maxpool e ao final a similaridade é calculada através da função \textit{cosine}. 
+
+O modelo CNN é uma rede neural convolucional com as mesmas camadas dos outros modelos. E utiliza também o maxpool e a mesma função de similaridade.
+
+A implementação dos modelos foi feito utilizando a biblioteca Keras. O código de implementação e o resultados preliminares estão disponíveis no repositório Git \url{https://github.com/mrezende/keras-language-modeling}. Além disso, os dados pré-processados podem ser visualizados no repositório \url{https://github.com/mrezende/stack_over_flow_python}.
 
 De acordo com a tabela~\ref{table:resultados-preliminares}, \textbf{bi-LSTM-CNN} obteve o melhor desempenho. Porém, CNN obteve um resultado muito próximo e o tempo de treinamento é muito menor. O tempo total de treinamento da rede bi-LSTM com CNN levou em torno de 48 minutos, utilizando uma GPU Tesla K80. Enquanto a arquitetura CNN levou em torno de 6s. 
 
@@ -210,7 +214,15 @@ Para minimizar o viés, utilizamos o mesmo procedimento de avaliação proposto 
 
 Neste trabalho, propusemos uma abordagem diferente para o problema do \textit{code retrieval}. Nosso intuito foi abordar o problema do \textit{code retrieval} sob a perspectiva do problema \textit{answer selection}, já conhecido em NLP. E dado o bom desempenho dos modelos deep learning no contexto do \textit{answer selection}, utilizamos o modelo proposto por \cite{tan-lstm-qa}.
 
-Conforme a seção~\ref{sec:resultados-preliminares}, o modelo proposto por \cite{tan-lstm-qa} apresentou um bom desempenho no problema do \textit{code retrieval}. 
+Conforme a seção~\ref{sec:resultados-preliminares}, o modelo proposto por \cite{tan-lstm-qa} apresentou um bom desempenho. Este resultado serve como um indicativo para aprimorarmos o modelo para o problema do \textit{code retrieval}. O próximo passo é validar o resultado na amostra disponibilizada por \cite{iyer-etal-2016-summarizing}. Iremos repetir o procedimento feito por \cite{Yao-staqc:2018}, utilizando os pares de questões de trechos de código-fonte em SQL.
+
+Além disso, como citado por \cite{lai-etal-2018-review}, trabalhos futuros podem aplicar o modelo BiMPM (\textit{Bilateral Multi-Perspective Matching for Natural Language Sentences}) proposto por \cite{wang-BiMPM-2017}, que apresentou um bom desempenho no problema de \textit{answer selection}.
+
+Uma frente ainda a ser explorada no problema do \textit{code retrieval} é a disponibilização de dados para avaliação dos modelos. A área de reconhecimento de imagem tem o \textit{ImageNet} \cite{imagenet_cvpr09} um vasto banco de dados com mais de 14 milhões de imagens anotados manualmente. A área de inferência em linguagem natural para determinar se uma hipótese é verdadeira, falsa ou neutra contém mais de 570 mil sentenças em inglês anotadas manualmente \cite{snli:emnlp2015}. 
+
+O próprio problema de \textit{answer selection} utiliza Trec-QA \cite{wang-etal-2007-jeopardy} e InsuranceQA \cite{feng-answer-selection-2015}. O trabalho de \cite{Yao-staqc:2018} anotou 4884 pares de questões e trechos de código-fonte manualmente. Isto é um passo importante, porém muito ainda precisa ser feito. E o StackOverFlow com seus mais de 17 milhões de perguntas em diversos tópicos de programação apresenta ser um bom repositório ainda a ser estudado \cite{stackoverflow-survey-2019}.
+
+
 
 
 
