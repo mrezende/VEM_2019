@@ -86,8 +86,7 @@ de atenção (attention). Esta arquitetura utilizada por \cite{iyer-etal-2016-su
 para recuperar o trecho de código-fonte a partir de uma descrição em linguagem natural, o modelo proposto por \cite{iyer-etal-2016-summarizing} foi utilizada para fazer o inverso, gerar uma descrição
 a partir de um trecho de código-fonte. A nossa proposta inicial é apenas recuperar o trecho de código-fonte a partir de uma descrição.
 
-Na seção método é apresentado a arquitetura utilizada e as adaptações necessárias feitas. Na seção resultados iniciais discute-se os resultados e os ajustes nos 
-parâmetros para evitar overfitting. Próximos passos e trabalhos futuros é apresentado na seção conclusão.
+Na seção~\ref{sec:metodo} é apresentado a forma de aprendizado e a arquitetura utilizada no problema do \textit{code retrieval}. Na seção~\ref{sec:experimento}, descrevemos os procedimentos e configurações utilizadas para obtenção e avaliação do modelo. Na seção~\ref{sec:resultados-preliminares} é apresentado os resultados preliminares obtidos por nosso modelo em comparação com dois outros modelos comumente utilizados. E próximos passos e trabalhos futuros são apresentados na última seção~\ref{sec:conclusao}.
 
 
 \section{Método} \label{sec:metodo}
@@ -172,7 +171,7 @@ Os parâmetros de execução foram os mesmos utilizados por \cite{tan-lstm-qa}. 
 
 
 
-\subsection{Resultados preliminares}\label{sec:resultados-preliminares}
+\section{Resultados preliminares}\label{sec:resultados-preliminares}
 
 Os resultados do experimento podem ser visualizados na tabela~\ref{table:resultados-preliminares}. Os resultados correspondem a média do MRR após 20 rodadas de execução utilizando o melhor modelo obtido a partir do treinamento. E o modelo foi avaliado utilizando os dados EVAL. 
 
@@ -210,7 +209,7 @@ Conforme exposto na seção~\ref{sec:experimento}, os dados utilizados no treina
 
 Para minimizar o viés, utilizamos o mesmo procedimento de avaliação proposto por \cite{iyer-etal-2016-summarizing}. Para cada par de $(q_{i}, c_{i}^{+})$, selecionamos aleatoriamente 49 distratores $c^{'}$ da amostra de treinamento, onde $c^{'} \neq c_{i}$. 
 
-\section{Conclusões}
+\section{Conclusões}\label{sec:conclusao}
 
 Neste trabalho, propusemos uma abordagem diferente para o problema do \textit{code retrieval}. Nosso intuito foi abordar o problema do \textit{code retrieval} sob a perspectiva do problema \textit{answer selection}, já conhecido em NLP. E dado o bom desempenho dos modelos deep learning no contexto do \textit{answer selection}, utilizamos o modelo proposto por \cite{tan-lstm-qa}.
 
